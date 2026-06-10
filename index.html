@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Baat — practice speaking the language you always heard</title>
+<meta name="description" content="An Urdu app for Pakistani Americans who understand the language but can't speak it back. Real conversations. No drills, no streaks, no scores." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream:   'rgb(var(--bg-rgb) / <alpha-value>)',
+          surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+          parch:   'rgb(var(--surface2-rgb) / <alpha-value>)',
+          ink:     'rgb(var(--ink-rgb) / <alpha-value>)',
+          inkmute: 'rgb(var(--inkmute-rgb) / <alpha-value>)',
+          accent:  'rgb(var(--accent-rgb) / <alpha-value>)',
+          accent2: 'rgb(var(--accent2-rgb) / <alpha-value>)',
+          accent3: 'rgb(var(--accent3-rgb) / <alpha-value>)',
+          oncream: 'rgb(var(--on-accent-rgb) / <alpha-value>)',
+        },
+        fontFamily: {
+          sans:  ['var(--font-body)', 'system-ui', 'sans-serif'],
+          serif: ['var(--font-display)', 'Georgia', 'serif'],
+          nast:  ['"Noto Nastaliq Urdu"', 'serif'],
+        },
+      }
+    }
+  };
+</script>
+
+<style>
+  /* ===== Ajrak design system — Mughal palette (Emerald/Gold/Madder on cream) ===== */
+  :root {
+    --bg-rgb: 243 241 230;
+    --surface-rgb: 251 250 242;
+    --surface2-rgb: 228 225 206;
+    --ink-rgb: 30 36 23;
+    --inkmute-rgb: 95 100 80;
+    --accent-rgb: 20 86 59;     /* emerald */
+    --accent2-rgb: 201 162 39;  /* gold    */
+    --accent3-rgb: 156 43 46;   /* madder  */
+    --on-accent-rgb: 243 241 230;
+    --accent: #14563B;
+    --accent-deep: #0E3D29;
+    --accent2: #C9A227;
+    --accent3: #9C2B2E;
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+    /* Block-print tiles (alpha masks — recolored via background-color) */
+    --tile-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 16 L32.2 24.6 L39.9 20.1 L35.4 27.8 L44 30 L35.4 32.2 L39.9 39.9 L32.2 35.4 L30 44 L27.8 35.4 L20.1 39.9 L24.6 32.2 L16 30 L24.6 27.8 L20.1 20.1 L27.8 24.6 Z' fill='%23000'/%3E%3Ccircle cx='30' cy='30' r='2.3' fill='%23000'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23000'/%3E%3Ccircle cx='60' cy='0' r='2' fill='%23000'/%3E%3Ccircle cx='0' cy='60' r='2' fill='%23000'/%3E%3Ccircle cx='60' cy='60' r='2' fill='%23000'/%3E%3C/svg%3E");
+    --tile-jaali: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='0' cy='0' r='22'/%3E%3Ccircle cx='44' cy='0' r='22'/%3E%3Ccircle cx='0' cy='44' r='22'/%3E%3Ccircle cx='44' cy='44' r='22'/%3E%3Ccircle cx='22' cy='22' r='22'/%3E%3C/g%3E%3C/svg%3E");
+    --tile-smallstar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 3 L13.4 8.7 L18.4 5.6 L15.3 10.6 L21 12 L15.3 13.4 L18.4 18.4 L13.4 15.3 L12 21 L10.6 15.3 L5.6 18.4 L8.7 13.4 L3 12 L8.7 10.6 L5.6 5.6 L10.6 8.7 Z' fill='%23000'/%3E%3C/svg%3E");
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  html, body { background: rgb(var(--bg-rgb)); color: rgb(var(--ink-rgb)); }
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---- Pattern utilities (mask-based, recolor with palette) ---- */
+  .pat {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+  .pat-star  { -webkit-mask-image: var(--tile-star);  mask-image: var(--tile-star);  -webkit-mask-size: 60px 60px; mask-size: 60px 60px; background-color: rgb(var(--accent-rgb)); }
+  .pat-jaali { -webkit-mask-image: var(--tile-jaali); mask-image: var(--tile-jaali); -webkit-mask-size: 44px 44px; mask-size: 44px 44px; background-color: rgb(var(--accent-rgb)); }
+  .pat-dots {
+    background-image: radial-gradient(rgb(var(--accent3-rgb) / 0.5) 1.4px, transparent 1.6px);
+    background-size: 22px 22px; background-position: 11px 11px;
+  }
+
+  /* ---- Urdu — always right-aligned ---- */
+  .nast { font-family: 'Noto Nastaliq Urdu', serif; direction: rtl; text-align: right; line-height: 1.9; }
+
+  /* ---- Drifting watermark glyph ---- */
+  .baat-watermark { font-family: 'Noto Nastaliq Urdu', serif; pointer-events: none; user-select: none; line-height: 1; }
+
+  /* ---- Star divider ---- */
+  .star-ornament {
+    width: 22px; height: 22px; display: inline-block;
+    -webkit-mask-image: var(--tile-smallstar); mask-image: var(--tile-smallstar);
+    -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    background-color: rgb(var(--accent3-rgb));
+  }
+  .star-ornament.gold { background-color: rgb(var(--accent2-rgb)); }
+  .star-ornament.sm { width: 14px; height: 14px; }
+
+  /* ---- Fade-up ---- */
+  .fade-up { opacity: 0; transform: translateY(18px); transition: opacity 1.05s cubic-bezier(.2,.6,.2,1), transform 1.05s cubic-bezier(.2,.6,.2,1); }
+  .fade-up.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .fade-up { opacity: 1; transform: none; transition: none; } }
+
+  /* ---- Form fields ---- */
+  .field {
+    background: rgb(var(--surface-rgb));
+    color: rgb(var(--ink-rgb));
+    border: 1.5px solid rgb(var(--ink-rgb) / 0.18);
+    transition: border-color .18s, box-shadow .18s;
+  }
+  .field:focus { outline: none; border-color: var(--accent2); box-shadow: 0 0 0 3px rgb(var(--accent2-rgb) / 0.25); }
+
+  /* ---- Buttons ---- */
+  .btn-ink {
+    background: var(--accent);
+    color: rgb(var(--on-accent-rgb));
+    border: 1.5px solid var(--accent2);
+    box-shadow: 0 10px 22px -14px rgb(var(--accent-rgb) / 0.7);
+    transition: transform .12s ease, background .18s;
+  }
+  .btn-ink:hover { background: var(--accent-deep); transform: translateY(-1px); }
+
+  .pill { transition: color .15s, background .15s, border-color .15s; }
+
+  /* ---- Scenario chip ---- */
+  .chip { transition: transform .15s ease, box-shadow .18s, border-color .18s; }
+  .chip:hover { transform: translateY(-3px); border-color: rgb(var(--accent2-rgb) / 0.7); box-shadow: 0 14px 28px -18px rgb(var(--accent-rgb) / 0.6); }
+
+  /* ---- Card ---- */
+  .ajrak-card { position: relative; background: rgb(var(--surface-rgb)); border: 1.5px solid rgb(var(--ink-rgb) / 0.1); }
+  .ajrak-card::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 10px, var(--accent2) 10px 20px, var(--accent3) 20px 30px);
+    opacity: 0.85;
+  }
+
+  /* ---- Horizontal scroll ---- */
+  .h-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+  .h-scroll::-webkit-scrollbar { display: none; }
+
+  /* ---- FAQ ---- */
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .faq-plus { transform: rotate(45deg); }
+  .faq-plus { transition: transform .25s ease; }
+
+  /* ---- Scenario float ---- */
+  .float-card {
+    opacity: 0;
+    will-change: transform;
+    transition: box-shadow .35s ease, opacity .5s ease;
+    cursor: pointer;
+  }
+  .float-card.ready { opacity: 1; }
+  .float-card:hover { box-shadow: 0 28px 56px -14px rgb(var(--ink-rgb) / 0.26); }
+
+  ::selection { background: rgb(var(--accent2-rgb) / 0.4); color: rgb(var(--ink-rgb)); }
+</style>
+</head>
+<body>
+
+  <!-- ============ Navbar ============ -->
+  <header id="site-nav" style="position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;transition:background .25s,backdrop-filter .25s,box-shadow .25s,border-color .25s;">
+    <nav class="mx-auto max-w-[1180px] px-5 sm:px-8 lg:px-12 h-20 flex items-center justify-between gap-6">
+      <a href="#top" class="flex items-center gap-2.5 shrink-0" aria-label="Baat — back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="38" aria-hidden="true" style="width:auto;flex-shrink:0">
+          <path d="M 32 140 C 72 100, 112 180, 152 140 S 216 100, 224 116" fill="none" stroke="rgb(var(--ink-rgb))" stroke-width="10" stroke-linecap="round" />
+          <circle cx="84" cy="84" r="8" fill="rgb(var(--ink-rgb))" />
+          <circle cx="124" cy="84" r="8" fill="rgb(var(--ink-rgb))" />
+          <circle cx="188" cy="196" r="10" fill="#E07856" />
+        </svg>
+        <span class="font-serif text-ink text-[28px] font-semibold lowercase tracking-[-0.02em]">baat</span>
+      </a>
+
+      <!-- Nav pills -->
+      <div class="hidden md:flex items-center gap-2">
+        <a href="#what"      class="nav-pill rounded-full border border-ink/18 bg-ink/[0.05] px-4 py-1.5 text-[13px] font-medium text-ink/70 hover:bg-ink/10 hover:text-ink transition-colors whitespace-nowrap">What it is</a>
+        <a href="#scenarios" class="nav-pill rounded-full border border-ink/18 bg-ink/[0.05] px-4 py-1.5 text-[13px] font-medium text-ink/70 hover:bg-ink/10 hover:text-ink transition-colors whitespace-nowrap">Scenarios</a>
+        <a href="#how"       class="nav-pill rounded-full border border-ink/18 bg-ink/[0.05] px-4 py-1.5 text-[13px] font-medium text-ink/70 hover:bg-ink/10 hover:text-ink transition-colors whitespace-nowrap">How it works</a>
+        <a href="#faq"       class="nav-pill rounded-full border border-ink/18 bg-ink/[0.05] px-4 py-1.5 text-[13px] font-medium text-ink/70 hover:bg-ink/10 hover:text-ink transition-colors whitespace-nowrap">FAQ</a>
+        <a href="#waitlist"  class="btn-ink ml-2 inline-flex items-center justify-center rounded-full px-5 py-2 text-[13px] font-semibold tracking-tight whitespace-nowrap">Get on the list</a>
+      </div>
+
+      <!-- Mobile CTA only -->
+      <a href="#waitlist" class="md:hidden btn-ink inline-flex items-center justify-center rounded-full px-4 py-2 text-[13px] font-semibold tracking-tight whitespace-nowrap">Get on the list</a>
+    </nav>
+  </header>
+
+<main>
+
+  <!-- ============ 01 · Hero ============ -->
+  <section id="top" class="relative w-full overflow-hidden border-b-[1.5px] border-ink/[0.08]"
+    style="background: radial-gradient(120% 80% at 85% -10%, rgb(var(--accent2-rgb) / 0.14) 0%, transparent 55%), radial-gradient(90% 70% at 0% 110%, rgb(var(--accent3-rgb) / 0.10) 0%, transparent 60%), rgb(var(--surface-rgb));">
+
+    <div class="pat pat-star opacity-[0.07]"></div>
+    <div aria-hidden="true" class="baat-watermark absolute select-none text-accent"
+      style="font-size: min(46vw, 620px); right: -2vw; top: 10%; opacity: 0.06; transform: rotate(-6deg);">بات</div>
+
+    <div class="relative mx-auto max-w-[1180px] px-5 sm:px-8 lg:px-12">
+      <div class="max-w-[920px] pt-20 sm:pt-28 pb-16 sm:pb-24">
+        <div class="flex items-center gap-3 mb-7">
+          <span class="star-ornament gold" style="background-color: rgb(206, 109, 13);"></span>
+          <span class="text-[11px] tracking-[0.26em] uppercase font-semibold text-accent2" style="color: rgb(128, 68, 14);">Reclaim your heritage</span>
+        </div>
+
+        <h1 class="font-serif text-ink text-[38px] leading-[1.06] sm:text-[58px] sm:leading-[1.03] lg:text-[74px] lg:leading-[1.02] tracking-[-0.02em]">Practice speaking the language you always heard.</h1>
+
+        <p class="mt-7 text-[17px] sm:text-[20px] leading-[1.55] text-ink/70 max-w-[620px]">real conversations. no drills, no streaks, no scores.</p>
+
+        <div class="mt-9 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <a href="#waitlist" class="btn-ink group inline-flex items-center justify-center rounded-[14px] px-7 py-4 text-[15px] font-semibold tracking-tight">
+            Get on the list
+            <span aria-hidden="true" class="ml-2 -mr-1 transition-transform group-hover:translate-x-0.5">→</span>
+          </a>
+          <span class="text-[13px] text-inkmute leading-snug">Built for the Pakistani American diaspora</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 · Manifesto ============ -->
+  <section class="relative overflow-hidden">
+    <div class="pat pat-jaali opacity-[0.06]"></div>
+    <div class="relative mx-auto max-w-[840px] px-5 sm:px-8 text-center py-20 sm:py-28">
+      <div class="flex items-center justify-center gap-4 py-2" aria-hidden="true">
+        <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+        <span class="star-ornament sm gold"></span>
+        <span class="star-ornament"></span>
+        <span class="star-ornament sm gold"></span>
+        <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+      </div>
+      <span class="block text-[11px] tracking-[0.3em] uppercase font-semibold text-accent3 mt-6 mb-8">The gap</span>
+
+      <div class="fade-up font-serif text-ink tracking-tight space-y-3">
+        <p class="text-[27px] sm:text-[39px] lg:text-[45px] leading-[1.16]">You understand more Urdu than you think.</p>
+        <p class="text-[27px] sm:text-[39px] lg:text-[45px] leading-[1.16]">The hard part isn't understanding. It's answering back.</p>
+      </div>
+
+      <p class="fade-up mt-8 text-[20px] sm:text-[26px] leading-[1.3] font-serif text-accent">We help you close that gap, one baat at a time.</p>
+
+      <figure class="fade-up mt-14 sm:mt-16">
+        <span class="star-ornament mx-auto block"></span>
+        <blockquote class="font-serif text-ink/90 text-[20px] sm:text-[26px] leading-[1.4] tracking-tight max-w-[560px] mx-auto mt-4">
+          “a space to practice where I feel comfortable”
+        </blockquote>
+        <figcaption class="mt-5 text-[11px] tracking-[0.2em] uppercase font-semibold text-accent3">Pakistani American, 27, Chicago</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ 03 · Sound familiar? ============ -->
+  <section class="bg-parch/40 border-y border-ink/[0.08] relative overflow-hidden">
+    <div class="pat pat-dots opacity-50"></div>
+    <div class="relative mx-auto max-w-[1100px] px-5 sm:px-8 py-20 sm:py-28">
+      <h2 class="font-serif text-ink text-[28px] sm:text-[42px] tracking-tight mb-12 sm:mb-16">Sound familiar?</h2>
+
+      <div class="grid sm:grid-cols-2 gap-x-12 gap-y-10 sm:gap-y-14 max-w-[980px]">
+        <div class="fade-up text-[20px] sm:text-[26px] leading-[1.35] font-serif text-ink">
+          <span class="mr-3 align-middle font-sans text-[12px] font-semibold tracking-[0.16em] text-accent3">01</span>You understand every word. You can't say one back.
+        </div>
+        <div class="fade-up text-[20px] sm:text-[26px] leading-[1.35] font-serif text-ink sm:translate-y-10" style="transition-delay:70ms">
+          <span class="mr-3 align-middle font-sans text-[12px] font-semibold tracking-[0.16em] text-accent3">02</span>You tried once. They laughed. You stopped.
+        </div>
+        <div class="fade-up text-[20px] sm:text-[26px] leading-[1.35] font-serif text-ink" style="transition-delay:140ms">
+          <span class="mr-3 align-middle font-sans text-[12px] font-semibold tracking-[0.16em] text-accent3">03</span>Your nani calls. You pass the phone.
+        </div>
+        <div class="fade-up text-[20px] sm:text-[26px] leading-[1.35] font-serif text-ink sm:translate-y-10" style="transition-delay:210ms">
+          <span class="mr-3 align-middle font-sans text-[12px] font-semibold tracking-[0.16em] text-accent3">04</span>Your kids will ask. You'll answer in English.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 · What it is ============ -->
+  <section id="what" class="relative scroll-mt-16">
+    <div class="mx-auto max-w-[1100px] px-5 sm:px-8 py-20 sm:py-28">
+      <h2 class="font-serif text-ink text-[28px] sm:text-[42px] tracking-tight max-w-[780px]">A real conversation. No judgement.</h2>
+
+      <div class="mt-12 sm:mt-16 grid md:grid-cols-3 gap-5">
+        <article class="ajrak-card fade-up rounded-2xl p-7 sm:p-8 pt-9 shadow-[0_18px_40px_-30px_rgb(var(--ink-rgb)/0.4)]">
+          <div class="flex items-baseline justify-between mb-5">
+            <span class="nast text-[42px] leading-none text-accent">بات</span>
+            <span class="text-[10px] tracking-[0.2em] uppercase text-accent3">talk</span>
+          </div>
+          <p class="text-[16px] sm:text-[17px] leading-[1.55] text-ink/85 font-serif">Real conversations in Urdu with an AI partner. You speak, it speaks back.</p>
+        </article>
+        <article class="ajrak-card fade-up rounded-2xl p-7 sm:p-8 pt-9 shadow-[0_18px_40px_-30px_rgb(var(--ink-rgb)/0.4)]" style="transition-delay:80ms">
+          <div class="flex items-baseline justify-between mb-5">
+            <span class="nast text-[42px] leading-none text-accent">آزاد</span>
+            <span class="text-[10px] tracking-[0.2em] uppercase text-accent3">free</span>
+          </div>
+          <p class="text-[16px] sm:text-[17px] leading-[1.55] text-ink/85 font-serif">No grades. No leaderboards. Nobody hears it but you.</p>
+        </article>
+        <article class="ajrak-card fade-up rounded-2xl p-7 sm:p-8 pt-9 shadow-[0_18px_40px_-30px_rgb(var(--ink-rgb)/0.4)]" style="transition-delay:160ms">
+          <div class="flex items-baseline justify-between mb-5">
+            <span class="nast text-[42px] leading-none text-accent">اپنا</span>
+            <span class="text-[10px] tracking-[0.2em] uppercase text-accent3">one's own</span>
+          </div>
+          <p class="text-[16px] sm:text-[17px] leading-[1.55] text-ink/85 font-serif">Built for people who already understand the language.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04b · Scenarios ============ -->
+  <section id="scenarios" class="bg-parch/40 border-y border-ink/[0.08] relative scroll-mt-16">
+    <div class="pat pat-star opacity-[0.05]"></div>
+
+    <!-- Heading — lives above the orbit, never overlaps -->
+    <div class="relative mx-auto max-w-[1100px] px-5 sm:px-8 pt-14 sm:pt-20 pb-4">
+      <h2 class="font-serif text-ink text-[26px] sm:text-[40px] tracking-tight">Pick a conversation. Have it.</h2>
+      <p class="mt-3 text-[14px] text-inkmute leading-relaxed">More added weekly. Tell us what to build.</p>
+    </div>
+
+    <!-- Orbit ring -->
+    <div class="relative flex justify-center pb-16 sm:pb-20">
+      <div id="scenario-orbit" class="relative select-none" style="width:680px;height:680px;max-width:min(680px,calc(100vw - 40px));max-height:min(680px,calc(100vw - 40px));">
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">چائے</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Order chai</div>
+        </div>
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">ساس</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Mother-in-law</div>
+        </div>
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">پھپھو</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Call your phupho</div>
+        </div>
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">بازار</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Haggle at a market</div>
+        </div>
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">شادی</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Wedding small talk</div>
+        </div>
+        <div class="float-card absolute top-1/2 left-1/2 w-[178px] rounded-2xl bg-surface border-[1.5px] border-ink/12 p-6 shadow-[0_10px_30px_-10px_rgb(var(--ink-rgb)/0.14)]">
+          <div class="nast text-[34px] leading-tight mb-2 text-accent">نانا</div>
+          <div class="text-[13px] font-semibold text-ink/70 leading-snug">Catch up with grandparents</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 · How it works ============ -->
+  <section id="how" class="relative scroll-mt-16">
+    <div class="mx-auto max-w-[1100px] px-5 sm:px-8 py-20 sm:py-28">
+      <h2 class="font-serif text-ink text-[28px] sm:text-[42px] tracking-tight max-w-[780px]">Three steps. Five minutes.</h2>
+
+      <ol class="mt-12 sm:mt-16 grid gap-10 sm:gap-14 max-w-[860px]">
+        <li class="fade-up grid grid-cols-[56px_1fr] sm:grid-cols-[92px_1fr] gap-5 sm:gap-8 items-start">
+          <div class="relative">
+            <div class="font-serif text-[56px] sm:text-[80px] leading-[0.85] tracking-tight text-accent">1</div>
+            <span class="star-ornament sm gold absolute -top-1 -right-1"></span>
+          </div>
+          <div>
+            <h3 class="font-serif text-ink text-[20px] sm:text-[26px] leading-[1.25] tracking-tight">Pick who you're talking to.</h3>
+            <p class="mt-2 text-[15px] sm:text-[17px] leading-[1.6] text-ink/75 max-w-[620px]">Mother-in-law, future kids, yourself.</p>
+          </div>
+        </li>
+        <li class="fade-up grid grid-cols-[56px_1fr] sm:grid-cols-[92px_1fr] gap-5 sm:gap-8 items-start">
+          <div class="relative">
+            <div class="font-serif text-[56px] sm:text-[80px] leading-[0.85] tracking-tight text-accent">2</div>
+            <span class="star-ornament sm gold absolute -top-1 -right-1"></span>
+          </div>
+          <div>
+            <h3 class="font-serif text-ink text-[20px] sm:text-[26px] leading-[1.25] tracking-tight">Talk for five minutes.</h3>
+            <p class="mt-2 text-[15px] sm:text-[17px] leading-[1.6] text-ink/75 max-w-[620px]">You speak in Urdu. The AI speaks back, in character.</p>
+          </div>
+        </li>
+        <li class="fade-up grid grid-cols-[56px_1fr] sm:grid-cols-[92px_1fr] gap-5 sm:gap-8 items-start">
+          <div class="relative">
+            <div class="font-serif text-[56px] sm:text-[80px] leading-[0.85] tracking-tight text-accent">3</div>
+            <span class="star-ornament sm gold absolute -top-1 -right-1"></span>
+          </div>
+          <div>
+            <h3 class="font-serif text-ink text-[20px] sm:text-[26px] leading-[1.25] tracking-tight">Get a short note.</h3>
+            <p class="mt-2 text-[15px] sm:text-[17px] leading-[1.6] text-ink/75 max-w-[620px]">Two things that worked. One thing to try. One word worth keeping.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ 07 · Waitlist ============ -->
+  <section id="waitlist" class="relative w-full overflow-hidden bg-parch/40 border-y border-ink/[0.08]">
+    <div class="pat pat-star opacity-[0.08]"></div>
+    <div class="relative mx-auto max-w-[1180px] px-5 sm:px-8 lg:px-12 py-20 sm:py-24">
+      <div class="text-center max-w-[720px] mx-auto mb-10">
+        <div class="flex items-center justify-center gap-4 py-2" aria-hidden="true">
+          <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+          <span class="star-ornament sm gold"></span>
+          <span class="star-ornament"></span>
+          <span class="star-ornament sm gold"></span>
+          <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+        </div>
+        <h2 class="font-serif text-accent text-[30px] sm:text-[48px] tracking-tight leading-[1.05] mt-7">Your first 3 conversations are free.</h2>
+        <p class="mt-4 text-[16px] sm:text-[18px] leading-[1.55] text-ink/70 max-w-[560px] mx-auto">Then $5.99/month or $49.99/year. Cancel anytime.</p>
+      </div>
+
+      <form class="waitlist-form max-w-[560px] mx-auto" novalidate>
+        <label class="block">
+          <span class="block text-[12px] font-medium text-ink mb-2 tracking-wide">Email</span>
+          <input type="email" name="email" required autocomplete="email" placeholder="you@example.com"
+            class="field w-full rounded-[12px] px-4 py-3 text-[15px]" />
+        </label>
+
+        <label class="block mt-5">
+          <span class="block text-[12px] font-medium text-ink mb-2 tracking-wide">
+            What's the moment you want to fix this for? <span class="text-inkmute font-normal">Optional.</span>
+          </span>
+          <textarea rows="3" name="trigger_moment" placeholder="A FaceTime. A wedding. A grandparent."
+            class="field w-full rounded-[12px] px-4 py-3 text-[14px] resize-none leading-relaxed"></textarea>
+        </label>
+
+        <p class="form-error mt-3 text-[12px] text-accent2 hidden"></p>
+
+        <button type="submit" class="btn-ink mt-6 w-full rounded-[14px] px-6 py-4 text-[15px] font-semibold tracking-tight disabled:opacity-70">Count me in</button>
+
+        <p class="mt-5 text-center text-[12px] text-inkmute leading-relaxed">No spam. No course. No owl.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ 08 · FAQ ============ -->
+  <section id="faq" class="relative scroll-mt-16">
+    <div class="mx-auto max-w-[860px] px-5 sm:px-8 py-20 sm:py-28">
+      <h2 class="font-serif text-ink text-[28px] sm:text-[42px] tracking-tight mb-10 sm:mb-12">Questions.</h2>
+
+      <div class="divide-y divide-ink/12 border-y border-ink/12">
+        <details open class="group py-5 sm:py-6">
+          <summary class="flex items-start justify-between gap-6">
+            <span class="font-serif text-ink text-[18px] sm:text-[22px] leading-[1.3] tracking-tight pr-2">What happens when I open the app?</span>
+            <span class="faq-plus shrink-0 mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-accent/40 text-accent text-[18px] leading-none">+</span>
+          </summary>
+          <p class="mt-3 text-[15px] sm:text-[16px] leading-[1.65] text-ink/75 max-w-[720px]">Pick a scenario. Tap the mic. An AI answers in Urdu, in character. You reply out loud. Five minutes later, a short note.</p>
+        </details>
+        <details class="group py-5 sm:py-6">
+          <summary class="flex items-start justify-between gap-6">
+            <span class="font-serif text-ink text-[18px] sm:text-[22px] leading-[1.3] tracking-tight pr-2">Is this Duolingo for Urdu?</span>
+            <span class="faq-plus shrink-0 mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-accent/40 text-accent text-[18px] leading-none">+</span>
+          </summary>
+          <p class="mt-3 text-[15px] sm:text-[16px] leading-[1.65] text-ink/75 max-w-[720px]">No. Duolingo teaches vocab. Baat is conversation practice. You speak. The AI speaks back.</p>
+        </details>
+        <details class="group py-5 sm:py-6">
+          <summary class="flex items-start justify-between gap-6">
+            <span class="font-serif text-ink text-[18px] sm:text-[22px] leading-[1.3] tracking-tight pr-2">How is this different from asking my mom?</span>
+            <span class="faq-plus shrink-0 mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-accent/40 text-accent text-[18px] leading-none">+</span>
+          </summary>
+          <p class="mt-3 text-[15px] sm:text-[16px] leading-[1.65] text-ink/75 max-w-[720px]">Your mom laughs when you mispronounce paani. Baat doesn't.</p>
+        </details>
+        <details class="group py-5 sm:py-6">
+          <summary class="flex items-start justify-between gap-6">
+            <span class="font-serif text-ink text-[18px] sm:text-[22px] leading-[1.3] tracking-tight pr-2">What if my Urdu is really bad?</span>
+            <span class="faq-plus shrink-0 mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-accent/40 text-accent text-[18px] leading-none">+</span>
+          </summary>
+          <p class="mt-3 text-[15px] sm:text-[16px] leading-[1.65] text-ink/75 max-w-[720px]">Then you're who it's built for. No level test, no leaderboard, no shame.</p>
+        </details>
+        <details class="group py-5 sm:py-6">
+          <summary class="flex items-start justify-between gap-6">
+            <span class="font-serif text-ink text-[18px] sm:text-[22px] leading-[1.3] tracking-tight pr-2">How much will it cost?</span>
+            <span class="faq-plus shrink-0 mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-accent/40 text-accent text-[18px] leading-none">+</span>
+          </summary>
+          <p class="mt-3 text-[15px] sm:text-[16px] leading-[1.65] text-ink/75 max-w-[720px]">Your first 3 conversations are free. After that, $5.99/month or $49.99/year. Cancel anytime.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 09 · Final CTA ============ -->
+  <section class="relative w-full overflow-hidden bg-surface border-t border-ink/[0.08]">
+    <div class="pat pat-jaali opacity-[0.08]"></div>
+    <div class="relative mx-auto max-w-[1180px] px-5 sm:px-8 lg:px-12 text-center py-24 sm:py-32">
+      <div class="flex items-center justify-center gap-4 py-2" aria-hidden="true">
+        <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+        <span class="star-ornament sm gold"></span>
+        <span class="star-ornament"></span>
+        <span class="star-ornament sm gold"></span>
+        <span class="h-px w-16 sm:w-24 bg-ink/15"></span>
+      </div>
+      <h2 class="font-serif text-ink text-[30px] sm:text-[52px] lg:text-[58px] leading-[1.08] tracking-tight max-w-[900px] mx-auto mt-8">Don't let the conversation end with you.</h2>
+      <div class="mt-10 max-w-[460px] mx-auto">
+        <form class="waitlist-form max-w-[560px] mx-auto" data-compact novalidate>
+          <label class="block">
+            <span class="block text-[12px] font-medium text-ink mb-2 tracking-wide">Email</span>
+            <input type="email" name="email" required autocomplete="email" placeholder="you@example.com"
+              class="field w-full rounded-[12px] px-4 py-3 text-[15px]" />
+          </label>
+          <p class="form-error mt-3 text-[12px] text-accent2 hidden"></p>
+          <button type="submit" class="btn-ink mt-6 w-full rounded-[14px] px-6 py-4 text-[15px] font-semibold tracking-tight disabled:opacity-70">Count me in</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="border-t border-ink/12 mt-2">
+    <div class="mx-auto max-w-[1100px] px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="26" aria-label="Baat" role="img" style="width:auto;flex-shrink:0">
+          <title>Baat</title>
+          <path d="M 32 140 C 72 100, 112 180, 152 140 S 216 100, 224 116" fill="none" stroke="rgb(var(--ink-rgb))" stroke-width="10" stroke-linecap="round" />
+          <circle cx="84" cy="84" r="8" fill="rgb(var(--ink-rgb))" />
+          <circle cx="124" cy="84" r="8" fill="rgb(var(--ink-rgb))" />
+          <circle cx="188" cy="196" r="10" fill="#E07856" />
+        </svg>
+        <span class="font-serif text-ink text-[15px] font-semibold lowercase tracking-[-0.01em]">baat</span>
+        <span class="text-[11px] text-inkmute ml-1">© 2026</span>
+      </div>
+      <div class="text-[11px] text-inkmute tracking-wide">baat.app</div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  /* ---- Navbar: transparent over hero, frost when scrolled past it ---- */
+  (function () {
+    var nav = document.getElementById("site-nav");
+    var hero = document.getElementById("top");
+    function update() {
+      var heroBottom = hero ? hero.getBoundingClientRect().bottom : 0;
+      var scrolled = heroBottom <= 80;
+      if (scrolled) {
+        nav.style.background = "rgb(var(--surface-rgb) / 0.92)";
+        nav.style.backdropFilter = "blur(12px)";
+        nav.style.webkitBackdropFilter = "blur(12px)";
+        nav.style.borderBottom = "1px solid rgb(var(--ink-rgb) / 0.08)";
+        nav.style.boxShadow = "0 1px 12px -4px rgb(var(--ink-rgb) / 0.10)";
+      } else {
+        nav.style.background = "transparent";
+        nav.style.backdropFilter = "";
+        nav.style.webkitBackdropFilter = "";
+        nav.style.borderBottom = "";
+        nav.style.boxShadow = "";
+      }
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+  })();
+
+  /* ---- Scenario circular orbit ---- */
+  (function () {
+    var container = document.getElementById('scenario-orbit');
+    if (!container) return;
+    var cards = Array.from(container.querySelectorAll('.float-card'));
+    var n = cards.length;
+    var hoveredIdx = -1;
+    var angle  = -Math.PI / 2; /* first card starts at top */
+    var speed  = 0.005;
+    var scales = new Array(n).fill(1);
+
+    cards.forEach(function (card, i) {
+      card.addEventListener('mouseenter', function () { hoveredIdx = i; });
+      card.addEventListener('mouseleave', function () { hoveredIdx = -1; });
+    });
+
+    function radius() {
+      /* 37% of container — leaves ~13% margin so cards don't clip */
+      return container.offsetWidth * 0.37;
+    }
+
+    function tick() {
+      var targetSpeed = hoveredIdx >= 0 ? 0.0007 : 0.005;
+      speed += (targetSpeed - speed) * 0.04;
+      angle += speed;
+      var r = radius();
+
+      for (var i = 0; i < n; i++) {
+        var theta = angle + (i * 2 * Math.PI / n);
+        var x = Math.cos(theta) * r;
+        var y = Math.sin(theta) * r;
+        var ts = hoveredIdx === i ? 1.22 : 1;
+        scales[i] += (ts - scales[i]) * 0.09;
+        cards[i].style.transform = 'translate(-50%,-50%) translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) scale(' + scales[i].toFixed(3) + ')';
+        cards[i].style.zIndex = hoveredIdx === i ? 10 : 1;
+        if (!cards[i].classList.contains('ready')) cards[i].classList.add('ready');
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  })();
+
+  /* ---- Fade-up on scroll ---- */
+  (function () {
+    var els = document.querySelectorAll(".fade-up");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* ---- Waitlist forms (POST to /api/waitlist; warm success state) ---- */
+  (function () {
+    var validEmail = function (s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim()); };
+    var markSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="36" aria-label="Baat" role="img" style="width:auto;flex-shrink:0"><title>Baat</title><path d="M 32 140 C 72 100, 112 180, 152 140 S 216 100, 224 116" fill="none" stroke="rgb(var(--ink-rgb))" stroke-width="10" stroke-linecap="round" /><circle cx="84" cy="84" r="8" fill="rgb(var(--ink-rgb))" /><circle cx="124" cy="84" r="8" fill="rgb(var(--ink-rgb))" /><circle cx="188" cy="196" r="10" fill="#E07856" /></svg>';
+
+    function success(form) {
+      var box = document.createElement("div");
+      box.className = "rounded-2xl border border-accent/20 bg-accent/[0.06] p-7 sm:p-9 max-w-[560px] mx-auto text-center";
+      box.innerHTML =
+        '<div class="flex justify-center mb-4">' + markSvg + '</div>' +
+        '<div class="nast text-accent2 text-[42px] sm:text-[52px] leading-none mb-3">شکریہ.</div>' +
+        '<p class="font-serif text-[18px] sm:text-[20px] leading-[1.5] text-ink">You\'re on the list. We\'ll email when Baat is ready.</p>';
+      form.replaceWith(box);
+    }
+
+    document.querySelectorAll("form.waitlist-form").forEach(function (form) {
+      var emailEl = form.querySelector('input[name="email"]');
+      var triggerEl = form.querySelector('textarea[name="trigger_moment"]');
+      var errEl = form.querySelector(".form-error");
+      var btn = form.querySelector('button[type="submit"]');
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+        if (!validEmail(emailEl.value)) {
+          if (errEl) { errEl.textContent = "That email doesn't look right."; errEl.classList.remove("hidden"); }
+          emailEl.focus();
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "One sec…";
+        fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailEl.value, trigger_moment: triggerEl ? triggerEl.value : "" })
+        }).catch(function () {}).finally(function () {
+          setTimeout(function () { success(form); }, 550);
+        });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
